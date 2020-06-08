@@ -1,0 +1,22 @@
+{
+  "name": "basicPOS",
+  "version": "0.1.0",
+  "summary": "A short description of basicPOS.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/nicolettemanas@gmail.com/basicPOS",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "nicolettemanas@gmail.com": "jmanas@imonggo.com"
+  },
+  "source": {
+    "git": "https://github.com/nicolettemanas@gmail.com/basicPOS.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "basicPOS/Classes/**/*"
+}

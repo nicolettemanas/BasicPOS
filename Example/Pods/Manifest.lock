@@ -1,0 +1,27 @@
+PODS:
+  - basicPOS (0.1.0)
+  - Nimble (8.0.9)
+  - Quick (2.2.0)
+
+DEPENDENCIES:
+  - basicPOS (from `../`)
+  - Nimble
+  - Quick
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Nimble
+    - Quick
+
+EXTERNAL SOURCES:
+  basicPOS:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  basicPOS: d25fc0ce8b6d282172d688f2a0ce981fec45c90f
+  Nimble: 98b888285a615fd34f20e61753cf58ea1402bde4
+  Quick: 7fb19e13be07b5dfb3b90d4f9824c855a11af40e
+
+PODFILE CHECKSUM: 43bd375393f852ffba490d34b6ace625a63a835c
+
+COCOAPODS: 1.7.5
