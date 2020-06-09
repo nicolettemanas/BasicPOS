@@ -7,6 +7,7 @@
 //
 import Quick
 import Nimble
+import basicPOS
 
 @testable import basicPOS_Example
 
@@ -108,6 +109,51 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable.currency()).to(equal("550.00"))
           expect(i.taxExempt.currency()).to(equal("0.00"))
           expect(i.discount.currency()).to(equal("50.00"))
+        }
+      }
+      
+      context("regular sale, with 20% overall discount, 12% and 7% exclusive tax") {
+        it("provides right computation and recomputes after modifying properties last") {
+          var i = InvoiceObj(isTaxInclusive: false, taxRates: [TestTaxes.tax1, TestTaxes.tax2])
+          
+          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          let line2 = InvoiceLineObj(invoice: i, id: 1, product: TestProducts.product2, qty: 1) // 250
+          let line3 = InvoiceLineObj(invoice: i, id: 2, product: TestProducts.product3, qty: 1) // 300
+          
+          i.add(line: line1)
+          i.add(line: line2)
+          i.add(line: line3)
+          
+          i.discountType = .percent(0.2)
+          
+          // 200 - 40 = 160 + 30.4 = 190.4
+          // 250 - 50 = 200 + 0    = 200
+          // 300 - 0  = 300 + 57   = 357
+          
+          expect(i.amountDue.currency()).to(equal("747.40"))
+          expect(i.tax.currency()).to(equal("87.40"))
+          expect(i.taxable.currency()).to(equal("460.00"))
+          expect(i.taxExempt.currency()).to(equal("200.00"))
+          expect(i.discount.currency()).to(equal("90.00"))
+        }
+      }
+      
+      context("regular sale, with 10% overall discount, 7% exclusive tax, tax exempt") {
+        it("provides right computation and recomputes after modifying properties last") {
+          var i = InvoiceObj(isTaxInclusive: true, taxRates: [])
+          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          
+          i.add(line: line1)
+          
+          i.isTaxExempt = true
+          i.taxRates = [TestTaxes.tax2]
+          i.discountType = .percent(0.1)
+          
+          expect(i.amountDue.currency()).to(equal("180.00"))
+          expect(i.tax.currency()).to(equal("0.00"))
+          expect(i.taxable.currency()).to(equal("0.00"))
+          expect(i.taxExempt.currency()).to(equal("180.00"))
+          expect(i.discount.currency()).to(equal("20.00"))
         }
       }
     }

@@ -75,7 +75,7 @@ public extension BPInvoiceLine where Self: Any {
     
     product = p
     qty = q
-    discount = d
+    discount = d ?? invoice.discountType
     
     isTaxExempt = invoice.isTaxExempt || (product.isTaxExempt ?? false)
     taxRates = isTaxExempt ? [] : product.taxRates + invoice.taxRates

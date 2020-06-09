@@ -13,10 +13,13 @@ public protocol BPInvoice {
   var id: Int { get set }
   var lines: [BPInvoiceLine] { get set }
   var isTaxInclusive: Bool { get set }
+  var taxRates: [BPTaxRate] { get set }
+  var isTaxExempt: Bool { get set }
+  var discountType: BPDiscountType? { get set }
   
   /// constants
 //  private let _taxRates: [BPTaxRate]
-  var taxRates: [BPTaxRate] { get set }
+  
 //    return isTaxExempt ? [] : _taxRates
 //  }
 //
@@ -55,11 +58,6 @@ public protocol BPInvoice {
 //    }
 //  }
 //
-//  var discountType: BPDiscountType? {
-//    didSet {
-//      recalculate()
-//    }
-//  }
 //
 //  /// Format:
 //  /// <AMOUNT> %  - for percent discounts
@@ -76,11 +74,6 @@ public protocol BPInvoice {
 //    }
 //  }
 //
-  var isTaxExempt: Bool { get set } // = false {
-//    didSet {
-//      recalculate()
-//    }
-//  }
 //
 //  /// resets and clears all invoice values
 //  /// starts with a clean invoice
