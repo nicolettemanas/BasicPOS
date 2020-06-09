@@ -1,16 +1,16 @@
 //
-//  TaxRateObj.swift
+//  ExtraChargeObj.swift
 //  basicPOS
 //
-//  Created by Jean on 08/06/2020.
+//  Created by Jean on 09/06/2020.
 //
 
 import Foundation
 
-public struct TaxRateObj: BPTaxRate {
+public struct ExtraChargeObj: BPExtraCharge {
   // MARK: non-conforming properties
   
-  // MARK: BPTaxRate
+  // MARK: BPExtraCharge
   public var id: String
   public var name: String?
   public var rate: Double?

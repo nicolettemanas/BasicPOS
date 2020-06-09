@@ -13,91 +13,12 @@ public protocol BPInvoice {
   var id: Int { get set }
   var lines: [BPInvoiceLine] { get set }
   var isTaxInclusive: Bool { get set }
-  var taxRates: [BPTaxRate] { get set }
   var isTaxExempt: Bool { get set }
   var discountType: BPDiscountType? { get set }
-  
-  /// constants
-//  private let _taxRates: [BPTaxRate]
-  
-//    return isTaxExempt ? [] : _taxRates
-//  }
-//
-//  // MARK: Initializers
-//  init(taxRates: [BPTaxRate], isTaxInclusive t: Bool = true) {
-//    _taxRates = taxRates
-//    isTaxInclusive = t
-//  }
-//
-  // MARK: - Private accumulated values
-//  private var _taxable: Double = 0
-//  var taxable: Double { return _taxable }
-//
-//  private var _tax: Double = 0
-//  var tax: Double { return _tax }
-//
-//  private var _amountDue: Double = 0
-//  var amountDue: Double { return _amountDue }
-//
-//  private var _discount: Double = 0
-//  var discount: Double { return _discount }
-//
-//  private var _extraCharges: [Int: Double] = [:]
-//  var totalExtraCharges: [Int: Double] { return _extraCharges }
-//
-//  // MARK: `Reactive` properties
-////  var customer: BPCustomer? {
-////    didSet {
-////      recalculate()
-////    }
-////  }
-//
-//  var extraCharges: [ExtraChargeObj] = [] {
-//    didSet {
-//      recalculate()
-//    }
-//  }
-//
-//
-//  /// Format:
-//  /// <AMOUNT> %  - for percent discounts
-//  /// <AMOUNT>    - for regular amount discounts
-//  var discountStr: String? {
-//    didSet {
-//      if discountStr?.contains("%") ?? false {
-//        _discountStr = nil
-//      } else {
-//        _discountStr = "\((discountStr?.doubleValue ?? 0)/Double(max(lines.count, 1)))"
-//      }
-//
-//      recalculate()
-//    }
-//  }
-//
-//
-//  /// resets and clears all invoice values
-//  /// starts with a clean invoice
-//  func reset() {
-//    clearAccumulators()
-//
-//    // MARK: `Reactive` properties
-//    customer = nil
-//    extraCharges = [] // default value of setting
-//    discountType = nil
-//    discountStr = nil
-//    guestCount = 1
-//    scpwdCount = 0
-//  }
-//
-//
-//  /// removes line from cart, computes and updates applicable values
-//  /// - Parameter line: line to remove
-//  func remove(line: InvoiceLineObj) {
-//    update(line: line, multiplier: -1)
-//    lines.removeAll { $0.id == line.id }
-//  }
-//}
-//
+  var customer: BPCustomer? { get set }
+  var taxRates: [BPTaxRate] { get set }
+  var chargeRates: [BPExtraCharge] { get set }
+
   mutating func add(line: BPInvoiceLine)
   
   mutating func remove(line: BPInvoiceLine)
@@ -111,6 +32,12 @@ public protocol BPInvoice {
   var taxExempt: Double { get }
   
   var discount: Double { get }
+  
+  var charge: Double { get }
+  
+  var taxesBreakdown: [String: Double] { get }
+
+  var chargesBreakdown: [String: Double] { get }
   
 //// MARK: - Private methods
 //private extension InvoiceObj {
@@ -136,21 +63,6 @@ public protocol BPInvoice {
 //    }
 //  }
 //
-//  private func add(line: InvoiceLineObj) {
-//    let line = line
-//    line.invoice = self
-//
-//    /// override discount if discount is an overall amount (not percent)
-//    /// set divided discount as oppose to the whole discount
-//    /// eg: Discount = P15
-//    /// set discount to P15/number of invoice lines
-//    if discountStr != nil && !(discountStr?.contains("%") ?? true) {
-//      line.discount = _discountStr
-//    }
-//
-//    lines.append(line)
-//    update(line: line, multiplier: 1)
-//  }
 //
 //  private func update(line: InvoiceLineObj, multiplier: Double) {
 //    /// add/subtract accumulated values
@@ -215,5 +127,31 @@ public extension BPInvoice where Self: Any {
   
   var discount: Double {
     return lines.reduce(0) { $0 + $1.discountAmount }
+  }
+  
+  var charge: Double {
+    return lines.reduce(0) { $0 + $1.charge }
+  }
+  
+  var taxesBreakdown: [String : Double] {
+    var b = taxRates.reduce(into: [:]) { $0[$1.id] = 0.0 }
+    for line in lines {
+      for tax in line.taxesBreakdown {
+        b[tax.key]! += tax.value
+      }
+    }
+    
+    return b
+  }
+
+  var chargesBreakdown: [String : Double] {
+    var b = chargeRates.reduce(into: [:]) { $0[$1.id] = 0.0 }
+    for line in lines {
+      for tax in line.chargesBreakdown {
+        b[tax.key]! += tax.value
+      }
+    }
+    
+    return b
   }
 }

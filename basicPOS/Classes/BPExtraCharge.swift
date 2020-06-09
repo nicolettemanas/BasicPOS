@@ -1,13 +1,13 @@
 //
-//  BPTaxRate.swift
+//  BPExtraCharge.swift
 //  basicPOS
 //
-//  Created by Jean on 26/05/2020.
+//  Created by Jean on 09/06/2020.
 //
 
 import Foundation
 
-public protocol BPTaxRate: Codable {
+public protocol BPExtraCharge: Codable {
   var id: String { get set }
   var name: String? { get set }
   var rate: Double? { get set }

@@ -8,14 +8,16 @@
 import Foundation
 
 public struct InvoiceLineObj: BPInvoiceLine {
+
   // MARK: BPInvoiceLine
   public var id: Int
   public var product: BPProduct
   public var qty: Double
   public var discount: BPDiscountType?
   public var isTaxExempt: Bool
-  public var taxRates: [BPTaxRate]
   public var isTaxInclusive: Bool
+  public var taxRates: [BPTaxRate]
+  public var chargeRates: [BPExtraCharge]
   
   // MARK: non-conforming properties & methods
   public init(invoice: BPInvoice,
@@ -25,6 +27,7 @@ public struct InvoiceLineObj: BPInvoiceLine {
        discount: BPDiscountType? = nil,
        isTaxExempt: Bool = false,
        taxRates: [BPTaxRate] = [],
+       chargeRates: [BPExtraCharge] = [],
        isTaxInclusive: Bool = true) {
     
     self.id = id
@@ -32,8 +35,9 @@ public struct InvoiceLineObj: BPInvoiceLine {
     self.qty = qty
     self.discount = discount ?? invoice.discountType
     self.isTaxExempt = isTaxExempt
-    self.taxRates = taxRates
     self.isTaxInclusive = isTaxInclusive
+    self.taxRates = taxRates
+    self.chargeRates = chargeRates
     
     set(product: product, qty: qty, invoice: invoice, discount: self.discount)
   }

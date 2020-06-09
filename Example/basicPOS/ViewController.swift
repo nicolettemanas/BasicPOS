@@ -14,8 +14,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
       super.viewDidLoad()
         
-      let product1 = ProductObj(id: 0, name: "Product 1", price: 200, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
-      let product2 = ProductObj(id: 1, name: "Product 2", price: 250, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])
+      let product1 = ProductObj(name: "Product 1", price: 200, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
+      let product2 = ProductObj(name: "Product 2", price: 250, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])
 //      let product3 = ProductObj(id: 2, name: "Product 3", price: 300, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])
 //      let product4 = ProductObj(id: 3, name: "Product 4", price: 350, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])
 //      let product5 = ProductObj(id: 4, name: "Product 5", price: 400, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])

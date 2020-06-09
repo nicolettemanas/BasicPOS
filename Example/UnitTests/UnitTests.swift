@@ -12,16 +12,26 @@ import basicPOS
 @testable import basicPOS_Example
 
 struct TestProducts {
-  static let product1 = ProductObj(id: 0, name: "Product 1", price: 200, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])
-  static let product2 = ProductObj(id: 1, name: "Product 2", price: 250, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
-  static let product3 = ProductObj(id: 2, name: "Product 3", price: 300, isTaxExempt: false, isDiscountDisabled: true, taxRates: [])
-  static let product4 = ProductObj(id: 3, name: "Product 4", price: 350, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
-  static let product5 = ProductObj(id: 4, name: "Product 5", price: 400, isTaxExempt: true, isDiscountDisabled: true, taxRates: [])
+  static let product1 = ProductObj(name: "Product 1", price: 200, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])
+  static let product2 = ProductObj(name: "Product 2", price: 250, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
+  static let product3 = ProductObj(name: "Product 3", price: 300, isTaxExempt: false, isDiscountDisabled: true, taxRates: [])
+  static let product4 = ProductObj(name: "Product 4", price: 350, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
+  static let product5 = ProductObj(name: "Product 5", price: 400, isTaxExempt: true, isDiscountDisabled: true, taxRates: [])
 }
 
 struct TestTaxes {
-  static let tax1 = TaxRateObj(id: 0, name: "VAT", rate: 0.12)
-  static let tax2 = TaxRateObj(id: 1, name: "Pink tax", rate: 0.07)
+  static let tax1 = TaxRateObj(id: "vat", name: "VAT", rate: 0.12)
+  static let tax2 = TaxRateObj(id: "pink", name: "Pink tax", rate: 0.07)
+}
+
+struct TestCharges {
+  static let charge1 = ExtraChargeObj(id: "shipping", name: "Shipping fee", rate: 0.10)
+  static let charge2 = ExtraChargeObj(id: "sc", name: "Service Charge", rate: 0.15)
+}
+
+struct TestCustomers {
+  static let customer1 = CustomerObj(name: "John Doe")
+  static let customer2 = CustomerObj(name: "Jane Doe", isTaxExempt: true)
 }
 
 class basicPOSTests: QuickSpec {
@@ -40,6 +50,7 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable).to(equal(600))
           expect(i.taxExempt).to(equal(0))
           expect(i.discount).to(equal(0))
+          expect(i.charge).to(equal(0))
           
           let line3 = InvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
           i.add(line: line3)
@@ -49,6 +60,10 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable).to(equal(1000))
           expect(i.taxExempt).to(equal(0))
           expect(i.discount).to(equal(0))
+          expect(i.charge).to(equal(0))
+          
+          expect(i.chargesBreakdown.count).to(equal(0))
+          expect(i.taxesBreakdown.count).to(equal(0))
         }
       }
       
@@ -65,6 +80,7 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable.currency()).to(equal("535.71"))
           expect(i.taxExempt.currency()).to(equal("0.00"))
           expect(i.discount.currency()).to(equal("0.00"))
+          expect(i.charge.currency()).to(equal("0.00"))
         }
       }
       
@@ -81,6 +97,11 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable.currency()).to(equal("504.20"))
           expect(i.taxExempt.currency()).to(equal("0.00"))
           expect(i.discount.currency()).to(equal("0.00"))
+          expect(i.charge.currency()).to(equal("0.00"))
+          
+          expect(i.taxesBreakdown.count).to(equal(2))
+          expect(i.taxesBreakdown[TestTaxes.tax1.id]?.currency()).to(equal("60.50"))
+          expect(i.taxesBreakdown[TestTaxes.tax2.id]?.currency()).to(equal("35.29"))
         }
       }
       
@@ -95,6 +116,7 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable.currency()).to(equal("491.07"))
           expect(i.taxExempt.currency()).to(equal("0.00"))
           expect(i.discount.currency()).to(equal("50.00"))
+          expect(i.charge.currency()).to(equal("0.00"))
         }
       }
       
@@ -109,6 +131,7 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable.currency()).to(equal("550.00"))
           expect(i.taxExempt.currency()).to(equal("0.00"))
           expect(i.discount.currency()).to(equal("50.00"))
+          expect(i.charge.currency()).to(equal("0.00"))
         }
       }
       
@@ -135,6 +158,11 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable.currency()).to(equal("460.00"))
           expect(i.taxExempt.currency()).to(equal("200.00"))
           expect(i.discount.currency()).to(equal("90.00"))
+          expect(i.charge.currency()).to(equal("0.00"))
+          
+          expect(i.taxesBreakdown.count).to(equal(2))
+          expect(i.taxesBreakdown[TestTaxes.tax1.id]?.currency()).to(equal("55.20"))
+          expect(i.taxesBreakdown[TestTaxes.tax2.id]?.currency()).to(equal("32.20"))
         }
       }
       
@@ -154,6 +182,81 @@ class basicPOSTests: QuickSpec {
           expect(i.taxable.currency()).to(equal("0.00"))
           expect(i.taxExempt.currency()).to(equal("180.00"))
           expect(i.discount.currency()).to(equal("20.00"))
+          expect(i.charge.currency()).to(equal("0.00"))
+        }
+      }
+      
+      context("regular sale, 12% inclusive tax, customer is tax exempt") {
+        it("provides right computation and recomputes after modifying properties last") {
+          var i = InvoiceObj(isTaxInclusive: false, taxRates: [])
+          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          
+          i.add(line: line1)
+          
+          i.isTaxExempt = false
+          i.customer = TestCustomers.customer2
+          i.taxRates = [TestTaxes.tax1]
+          
+          expect(i.amountDue.currency()).to(equal("200.00"))
+          expect(i.tax.currency()).to(equal("0.00"))
+          expect(i.taxable.currency()).to(equal("0.00"))
+          expect(i.taxExempt.currency()).to(equal("200.00"))
+          expect(i.discount.currency()).to(equal("0.00"))
+          expect(i.charge.currency()).to(equal("0.00"))
+        }
+      }
+      
+      context("regular sale, 12% inclusive and exclusive tax, 10% shipping fee") {
+        it("provides right computation and recomputes after modifying properties last") {
+          var i = InvoiceObj(isTaxInclusive: true)
+          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          
+          i.add(line: line1)
+          
+          i.taxRates = [TestTaxes.tax1]
+          i.chargeRates = [TestCharges.charge1]
+          
+          expect(i.amountDue.currency()).to(equal("220.00"))
+          expect(i.tax.currency()).to(equal("21.43"))
+          expect(i.taxable.currency()).to(equal("178.57"))
+          expect(i.taxExempt.currency()).to(equal("20.00"))
+          expect(i.discount.currency()).to(equal("0.00"))
+          expect(i.charge.currency()).to(equal("20.00"))
+          
+          i.isTaxInclusive = false
+          
+          expect(i.amountDue.currency()).to(equal("246.40"))
+          expect(i.tax.currency()).to(equal("24.00"))
+          expect(i.taxable.currency()).to(equal("200.00"))
+          expect(i.taxExempt.currency()).to(equal("22.40"))
+          expect(i.discount.currency()).to(equal("0.00"))
+          expect(i.charge.currency()).to(equal("22.40"))
+          
+          expect(i.chargesBreakdown.count).to(equal(1))
+          expect(i.chargesBreakdown[TestCharges.charge1.id]?.currency()).to(equal("22.40"))
+        }
+      }
+      
+      context("regular sale, 12% tax inclusive, 10% shipping fee, 15% service charge") {
+        it("provides right computation and recomputes after modifying properties last") {
+          var i = InvoiceObj(isTaxInclusive: true)
+          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          
+          i.add(line: line1)
+          
+          i.taxRates = [TestTaxes.tax1]
+          i.chargeRates = [TestCharges.charge1, TestCharges.charge2]
+          
+          expect(i.amountDue.currency()).to(equal("250.00"))
+          expect(i.tax.currency()).to(equal("21.43"))
+          expect(i.taxable.currency()).to(equal("178.57"))
+          expect(i.taxExempt.currency()).to(equal("50.00"))
+          expect(i.discount.currency()).to(equal("0.00"))
+          expect(i.charge.currency()).to(equal("50.00"))
+          
+          expect(i.chargesBreakdown.count).to(equal(2))
+          expect(i.chargesBreakdown[TestCharges.charge1.id]?.currency()).to(equal("20.00"))
+          expect(i.chargesBreakdown[TestCharges.charge2.id]?.currency()).to(equal("30.00"))
         }
       }
     }

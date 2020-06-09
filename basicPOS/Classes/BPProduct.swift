@@ -8,7 +8,6 @@
 import Foundation
 
 public protocol BPProduct {
-  var id: Int? { get set }
   var name: String? { get set }
   var price: Double? { get set }
   var isTaxExempt: Bool? { get set }

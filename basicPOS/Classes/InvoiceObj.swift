@@ -8,10 +8,14 @@
 import Foundation
 
 public struct InvoiceObj: BPInvoice {
+  
   // MARK: non-conforming properties
   
   // MARK: BPInvoice
   public var id: Int
+  
+  public var lines: [BPInvoiceLine]
+  
   public var isTaxInclusive: Bool {
     didSet {
       recalculate()
@@ -24,32 +28,46 @@ public struct InvoiceObj: BPInvoice {
     }
   }
   
-  public var taxRates: [BPTaxRate] {
-    didSet {
-      recalculate()
-    }
-  }
-  
   public var discountType: BPDiscountType? {
     didSet {
       recalculate()
     }
   }
   
-  public var lines: [BPInvoiceLine]
+  public var customer: BPCustomer? {
+    didSet {
+      recalculate()
+    }
+  }
+  
+  public var taxRates: [BPTaxRate] {
+    didSet {
+      recalculate()
+    }
+  }
+  
+  public var chargeRates: [BPExtraCharge] {
+    didSet {
+      recalculate()
+    }
+  }
   
   public init(id: Int = 0,
        isTaxInclusive: Bool = true,
        isTaxExempt: Bool = false,
        taxRates: [BPTaxRate] = [],
-       discountType: BPDiscountType? = nil) {
+       chargeRates: [BPExtraCharge] = [],
+       discountType: BPDiscountType? = nil,
+       customer: BPCustomer? = nil) {
     
     self.id = id
     self.isTaxInclusive = isTaxInclusive
     self.isTaxExempt = isTaxExempt
     self.lines = []
     self.taxRates = taxRates
+    self.chargeRates = chargeRates
     self.discountType = discountType
+    self.customer = customer
   }
   
   /// removes and adds modified lines to update computation
@@ -74,6 +92,7 @@ public struct InvoiceObj: BPInvoice {
     print("Taxable: \(taxable)")
     print("Tax Exempt: \(taxExempt)")
     print("Discount: \(discount)")
+    print("Extra charges: \(charge)")
     print("=========END=========")
   }
 }
