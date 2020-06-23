@@ -38,66 +38,6 @@ public protocol BPInvoice {
   var taxesBreakdown: [String: Double] { get }
 
   var chargesBreakdown: [String: Double] { get }
-  
-//// MARK: - Private methods
-//private extension InvoiceObj {
-//  /// Clears all non-reactive variables
-//  private func clearAccumulators() {
-//    lines = []
-//
-//    _taxable = 0
-//    _tax = 0
-//    _vatExempt = 0
-//    _zeroRated = 0
-//    _amountDue = 0
-//    _discount = 0
-//    _extraCharges = [:]
-//  }
-//
-//  private func recalculate() {
-//    let _lines = lines
-//    clearAccumulators()
-//
-//    for l in _lines {
-//      add(line: l)
-//    }
-//  }
-//
-//
-//  private func update(line: InvoiceLineObj, multiplier: Double) {
-//    /// add/subtract accumulated values
-//    /// depending on the multiplier (1 if add, -1 if subtract)
-//    _taxable    += line.taxable * multiplier
-//    _tax        += line.tax * multiplier
-//    _vatExempt  += line.vatExemptAmount * multiplier
-//    _zeroRated  += line.zeroRatedAmount * multiplier
-//    _discount   += line.discountInAmount * multiplier
-//    _amountDue  += line.amountDue * multiplier
-//
-//    applyExtraCharges(for: line, multiplier: multiplier)
-//  }
-//
-//  private func applyExtraCharges(for line: InvoiceLineObj, multiplier: Double) {
-//    for charge in extraCharges {
-//      let existingChargeAmt = _extraCharges[charge.id] ?? 0
-//      let additionalAmount = line.amountDue * charge.rate * multiplier
-//
-//      _extraCharges[charge.id] = (existingChargeAmt + additionalAmount).roundToNearest(decimalCount: 2)
-//      _amountDue += additionalAmount
-//
-//      if charge.vatable && !line.isTaxExempt && !isZeroRated {
-//        let additionalVatable = additionalAmount / (1 + line.totalTaxRate)
-//        _taxable += additionalVatable
-//        _tax += additionalVatable * line.totalTaxRate
-//      }
-//
-//      if isZeroRated {
-//        _zeroRated += additionalAmount
-//      } else if line.isTaxExempt {
-//        _vatExempt += additionalAmount
-//      }
-//    }
-//  }
 }
 
 public extension BPInvoice where Self: Any {

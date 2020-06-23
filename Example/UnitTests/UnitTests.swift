@@ -163,6 +163,10 @@ class basicPOSTests: QuickSpec {
           expect(i.taxesBreakdown.count).to(equal(2))
           expect(i.taxesBreakdown[TestTaxes.tax1.id]?.currency()).to(equal("55.20"))
           expect(i.taxesBreakdown[TestTaxes.tax2.id]?.currency()).to(equal("32.20"))
+          
+          expect(i.taxesBreakdown.count).to(equal(2))
+          expect(i.taxesBreakdown[TestTaxes.tax1.id]?.currency()).to(equal("55.20"))
+          expect(i.taxesBreakdown[TestTaxes.tax2.id]?.currency()).to(equal("32.20"))
         }
       }
       
@@ -234,6 +238,9 @@ class basicPOSTests: QuickSpec {
           
           expect(i.chargesBreakdown.count).to(equal(1))
           expect(i.chargesBreakdown[TestCharges.charge1.id]?.currency()).to(equal("22.40"))
+          
+          expect(i.taxesBreakdown.count).to(equal(1))
+          expect(i.taxesBreakdown[TestTaxes.tax1.id]?.currency()).to(equal("24.00"))
         }
       }
       
@@ -257,6 +264,9 @@ class basicPOSTests: QuickSpec {
           expect(i.chargesBreakdown.count).to(equal(2))
           expect(i.chargesBreakdown[TestCharges.charge1.id]?.currency()).to(equal("20.00"))
           expect(i.chargesBreakdown[TestCharges.charge2.id]?.currency()).to(equal("30.00"))
+          
+          expect(i.taxesBreakdown.count).to(equal(1))
+          expect(i.taxesBreakdown[TestTaxes.tax1.id]?.currency()).to(equal("21.43"))
         }
       }
     }
