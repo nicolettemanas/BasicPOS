@@ -52,7 +52,7 @@
 		7888C4ED4C2ADB9218273C35 /* Pods_basicPOS_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_basicPOS_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E9ED0D81212949CF49CADE4 /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30F2A61DDA470C9F2E6A709 /* Pods-basicPOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-basicPOSTests.release.xcconfig"; path = "Target Support Files/Pods-basicPOSTests/Pods-basicPOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		C2963FC686D4583AFFF2C0F1 /* basicPOS.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = basicPOS.podspec; path = ../basicPOS.podspec; sourceTree = "<group>"; };
+		C2963FC686D4583AFFF2C0F1 /* basicPOS.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = basicPOS.podspec; path = ../basicPOS.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		FA1A7B7A89310DDF80A472D9 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
