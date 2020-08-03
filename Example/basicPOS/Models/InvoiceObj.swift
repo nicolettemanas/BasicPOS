@@ -1,5 +1,5 @@
 //
-//  InvoiceObj.swift
+//  BPInvoiceObj.swift
 //  basicPOS_Example
 //
 //  Created by Jean on 05/06/2020.

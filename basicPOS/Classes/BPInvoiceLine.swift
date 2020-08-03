@@ -1,5 +1,5 @@
 //
-//  InvoiceLineObj.swift
+//  BPInvoiceLineObj.swift
 //  basicPOS
 //
 //  Created by Jean on 26/05/2020.

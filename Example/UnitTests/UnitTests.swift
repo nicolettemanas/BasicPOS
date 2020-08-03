@@ -39,9 +39,9 @@ class basicPOSTests: QuickSpec {
     describe("InvoiceObj") {
       context("regular sale, no discounts, no tax, no extra charges") {
         it("provides right computation and recomputes after adding a line") {
-          var i = InvoiceObj()
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1)
-          let line2 = InvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
+          var i = BPInvoiceObj()
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1)
+          let line2 = BPInvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
           i.add(line: line1)
           i.add(line: line2)
           
@@ -52,7 +52,7 @@ class basicPOSTests: QuickSpec {
           expect(i.discount).to(equal(0))
           expect(i.charge).to(equal(0))
           
-          let line3 = InvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
+          let line3 = BPInvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
           i.add(line: line3)
           
           expect(i.amountDue).to(equal(1000.00))
@@ -69,9 +69,9 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, no discounts, with 12% inclusive tax") {
         it("provides right computation") {
-          var i = InvoiceObj(taxRates: [TestTaxes.tax1])
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1)
-          let line2 = InvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
+          var i = BPInvoiceObj(taxRates: [TestTaxes.tax1])
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1)
+          let line2 = BPInvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
           i.add(line: line1)
           i.add(line: line2)
           
@@ -86,9 +86,9 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, no discount, with 7% and 12% inclusive tax") {
         it("provides right computation") {
-          var i = InvoiceObj(taxRates: [TestTaxes.tax1, TestTaxes.tax2])
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1)
-          let line2 = InvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
+          var i = BPInvoiceObj(taxRates: [TestTaxes.tax1, TestTaxes.tax2])
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1)
+          let line2 = BPInvoiceLineObj(invoice: i, id: 1, product: TestProducts.product1, qty: 2)
           i.add(line: line1)
           i.add(line: line2)
           
@@ -107,8 +107,8 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, with 50 line discount, 12% inclusive tax") {
         it("provides right computation") {
-          var i = InvoiceObj(taxRates: [TestTaxes.tax1])
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3, discount: .amount(50))
+          var i = BPInvoiceObj(taxRates: [TestTaxes.tax1])
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3, discount: .amount(50))
           i.add(line: line1)
           
           expect(i.amountDue.currency()).to(equal("550.00"))
@@ -122,8 +122,8 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, with 50 line discount, 12% exclusive tax") {
         it("provides right computation") {
-          var i = InvoiceObj(isTaxInclusive: false, taxRates: [TestTaxes.tax1])
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3, discount: .amount(50))
+          var i = BPInvoiceObj(isTaxInclusive: false, taxRates: [TestTaxes.tax1])
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3, discount: .amount(50))
           i.add(line: line1)
           
           expect(i.amountDue.currency()).to(equal("616.00"))
@@ -137,11 +137,11 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, with 20% overall discount, 12% and 7% exclusive tax") {
         it("provides right computation and recomputes after modifying properties last") {
-          var i = InvoiceObj(isTaxInclusive: false, taxRates: [TestTaxes.tax1, TestTaxes.tax2])
+          var i = BPInvoiceObj(isTaxInclusive: false, taxRates: [TestTaxes.tax1, TestTaxes.tax2])
           
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
-          let line2 = InvoiceLineObj(invoice: i, id: 1, product: TestProducts.product2, qty: 1) // 250
-          let line3 = InvoiceLineObj(invoice: i, id: 2, product: TestProducts.product3, qty: 1) // 300
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          let line2 = BPInvoiceLineObj(invoice: i, id: 1, product: TestProducts.product2, qty: 1) // 250
+          let line3 = BPInvoiceLineObj(invoice: i, id: 2, product: TestProducts.product3, qty: 1) // 300
           
           i.add(line: line1)
           i.add(line: line2)
@@ -172,8 +172,8 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, with 10% overall discount, 7% exclusive tax, tax exempt") {
         it("provides right computation and recomputes after modifying properties last") {
-          var i = InvoiceObj(isTaxInclusive: true, taxRates: [])
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          var i = BPInvoiceObj(isTaxInclusive: true, taxRates: [])
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
           
           i.add(line: line1)
           
@@ -192,8 +192,8 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, 12% inclusive tax, customer is tax exempt") {
         it("provides right computation and recomputes after modifying properties last") {
-          var i = InvoiceObj(isTaxInclusive: false, taxRates: [])
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          var i = BPInvoiceObj(isTaxInclusive: false, taxRates: [])
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
           
           i.add(line: line1)
           
@@ -212,8 +212,8 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, 12% inclusive and exclusive tax, 10% shipping fee") {
         it("provides right computation and recomputes after modifying properties last") {
-          var i = InvoiceObj(isTaxInclusive: true)
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          var i = BPInvoiceObj(isTaxInclusive: true)
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
           
           i.add(line: line1)
           
@@ -246,8 +246,8 @@ class basicPOSTests: QuickSpec {
       
       context("regular sale, 12% tax inclusive, 10% shipping fee, 15% service charge") {
         it("provides right computation and recomputes after modifying properties last") {
-          var i = InvoiceObj(isTaxInclusive: true)
-          let line1 = InvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+          var i = BPInvoiceObj(isTaxInclusive: true)
+          let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
           
           i.add(line: line1)
           
