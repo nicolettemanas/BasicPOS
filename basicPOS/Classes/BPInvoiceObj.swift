@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct InvoiceObj: BPInvoice {
+public struct BPInvoiceObj: BPInvoice {
   
   // MARK: non-conforming properties
   

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ProductObj: BPProduct {
+public struct BPProductObj: BPProduct {
   // MARK: non-conforming properties
   
   // MARK: BPProduct

@@ -25,7 +25,7 @@ TODO: Add long description of the pod here.
   s.homepage         = 'https://github.com/nicolettemanas/BasicPOS'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'nicolettemanas@gmail.com' => 'jmanas@imonggo.com' }
+  s.author           = { 'Jean Manas' => 'nicolettemanas@gmail.com' }
   s.source           = { :git => 'https://github.com/nicolettemanas/BasicPOS.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 

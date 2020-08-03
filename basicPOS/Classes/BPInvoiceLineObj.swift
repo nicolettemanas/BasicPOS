@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct InvoiceLineObj: BPInvoiceLine {
+public struct BPInvoiceLineObj: BPInvoiceLine {
 
   // MARK: BPInvoiceLine
   public var id: Int

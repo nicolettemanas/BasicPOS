@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ExtraChargeObj: BPExtraCharge {
+public struct BPExtraChargeObj: BPExtraCharge {
   // MARK: non-conforming properties
   
   // MARK: BPExtraCharge

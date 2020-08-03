@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CustomerObj: BPCustomer {
+public struct BPCustomerObj: BPCustomer {
   public var name: String?
   public var isTaxExempt: Bool
   

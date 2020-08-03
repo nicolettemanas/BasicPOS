@@ -12,26 +12,26 @@ import basicPOS
 @testable import basicPOS_Example
 
 struct TestProducts {
-  static let product1 = ProductObj(name: "Product 1", price: 200, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])
-  static let product2 = ProductObj(name: "Product 2", price: 250, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
-  static let product3 = ProductObj(name: "Product 3", price: 300, isTaxExempt: false, isDiscountDisabled: true, taxRates: [])
-  static let product4 = ProductObj(name: "Product 4", price: 350, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
-  static let product5 = ProductObj(name: "Product 5", price: 400, isTaxExempt: true, isDiscountDisabled: true, taxRates: [])
+  static let product1 = BPProductObj(name: "Product 1", price: 200, isTaxExempt: false, isDiscountDisabled: false, taxRates: [])
+  static let product2 = BPProductObj(name: "Product 2", price: 250, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
+  static let product3 = BPProductObj(name: "Product 3", price: 300, isTaxExempt: false, isDiscountDisabled: true, taxRates: [])
+  static let product4 = BPProductObj(name: "Product 4", price: 350, isTaxExempt: true, isDiscountDisabled: false, taxRates: [])
+  static let product5 = BPProductObj(name: "Product 5", price: 400, isTaxExempt: true, isDiscountDisabled: true, taxRates: [])
 }
 
 struct TestTaxes {
-  static let tax1 = TaxRateObj(id: "vat", name: "VAT", rate: 0.12)
-  static let tax2 = TaxRateObj(id: "pink", name: "Pink tax", rate: 0.07)
+  static let tax1 = BPTaxRateObj(id: "vat", name: "VAT", rate: 0.12)
+  static let tax2 = BPTaxRateObj(id: "pink", name: "Pink tax", rate: 0.07)
 }
 
 struct TestCharges {
-  static let charge1 = ExtraChargeObj(id: "shipping", name: "Shipping fee", rate: 0.10)
-  static let charge2 = ExtraChargeObj(id: "sc", name: "Service Charge", rate: 0.15)
+  static let charge1 = BPExtraChargeObj(id: "shipping", name: "Shipping fee", rate: 0.10)
+  static let charge2 = BPExtraChargeObj(id: "sc", name: "Service Charge", rate: 0.15)
 }
 
 struct TestCustomers {
-  static let customer1 = CustomerObj(name: "John Doe")
-  static let customer2 = CustomerObj(name: "Jane Doe", isTaxExempt: true)
+  static let customer1 = BPCustomerObj(name: "John Doe")
+  static let customer2 = BPCustomerObj(name: "Jane Doe", isTaxExempt: true)
 }
 
 class basicPOSTests: QuickSpec {

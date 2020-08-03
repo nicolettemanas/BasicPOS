@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct TaxRateObj: BPTaxRate {
+public struct BPTaxRateObj: BPTaxRate {
   // MARK: non-conforming properties
   
   // MARK: BPTaxRate
