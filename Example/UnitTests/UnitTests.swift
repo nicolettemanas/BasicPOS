@@ -269,6 +269,140 @@ class basicPOSTests: QuickSpec {
           expect(i.taxesBreakdown[TestTaxes.tax1.id]?.currency()).to(equal("21.43"))
         }
       }
+      
+      context("local computations") {
+        context("regular sale, SCPWD20 discount, 1 guest") {
+          it("provides right computation") {
+            var i = BPInvoiceObj(isTaxInclusive: true)
+            let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 1) // 200
+            
+            i.add(line: line1)
+            i.discountType = .scpwd20
+            i.numOfGuests = 1
+            i.numOfSCPWD = 1
+            
+            i.taxRates = [TestTaxes.tax1]
+            
+            expect(i.amountDue.currency()).to(equal("142.86"))
+            expect(i.tax.currency()).to(equal("0.00"))
+            expect(i.taxable.currency()).to(equal("0.00"))
+            expect(i.taxExempt.currency()).to(equal("142.86"))
+            expect(i.discount.currency()).to(equal("35.71"))
+            expect(i.charge.currency()).to(equal("0.00"))
+          }
+        }
+        
+        context("regular sale, SCPWD20 discount, 5 guests, 4 SCPWD") {
+          it("provides right computation") {
+            var i = BPInvoiceObj(isTaxInclusive: true)
+            let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3) // 200
+            
+            i.add(line: line1)
+            i.discountType = .scpwd20
+            i.numOfGuests = 5
+            i.numOfSCPWD = 4
+            
+            i.taxRates = [TestTaxes.tax1]
+            
+            expect(i.amountDue.currency()).to(equal("462.86"))
+            expect(i.tax.currency()).to(equal("12.86"))
+            expect(i.taxable.currency()).to(equal("107.14"))
+            expect(i.taxExempt.currency()).to(equal("342.86"))
+            expect(i.discount.currency()).to(equal("85.71"))
+            expect(i.charge.currency()).to(equal("0.00"))
+          }
+        }
+        
+        context("regular sale, SCPWD5 discount, 6 guests, 6 SCPWD") {
+          it("provides right computation") {
+            var i = BPInvoiceObj(isTaxInclusive: true)
+            let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3) // 200
+            
+            i.add(line: line1)
+            i.discountType = .scpwd5
+            i.numOfGuests = 6
+            i.numOfSCPWD = 6
+            
+            i.taxRates = [TestTaxes.tax1]
+            
+            expect(i.amountDue.currency()).to(equal("570.00"))
+            expect(i.tax.currency()).to(equal("61.07"))
+            expect(i.taxable.currency()).to(equal("508.93"))
+            expect(i.taxExempt.currency()).to(equal("0.00"))
+            expect(i.discount.currency()).to(equal("30.00"))
+            expect(i.charge.currency()).to(equal("0.00"))
+          }
+        }
+        
+        context("regular sale, SCPWD5 discount, 5 guest, 1 SCPWD") {
+          it("provides right computation") {
+            var i = BPInvoiceObj(isTaxInclusive: true)
+            let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3) // 200
+            let line2 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 2) // 200
+            
+            i.add(line: line1)
+            i.add(line: line2)
+            i.discountType = .scpwd5
+            i.numOfGuests = 5
+            i.numOfSCPWD = 1
+            
+            i.taxRates = [TestTaxes.tax1]
+            
+            expect(i.amountDue.currency()).to(equal("990.00"))
+            expect(i.tax.currency()).to(equal("106.07"))
+            expect(i.taxable.currency()).to(equal("883.93"))
+            expect(i.taxExempt.currency()).to(equal("0.00"))
+            expect(i.discount.currency()).to(equal("10.00"))
+            expect(i.charge.currency()).to(equal("0.00"))
+          }
+        }
+        
+        context("regular sale, SCPWD20 discount, one product is tax exempt") {
+          it("provides right computation") {
+            var i = BPInvoiceObj(isTaxInclusive: true)
+            let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3) // 200
+            let line2 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product2, qty: 2) // 250
+            
+            i.add(line: line1)
+            i.add(line: line2)
+            i.discountType = .scpwd20
+            i.numOfGuests = 5
+            i.numOfSCPWD = 2
+            
+            i.taxRates = [TestTaxes.tax1]
+            
+            expect(i.amountDue.currency()).to(equal("991.43"))
+            expect(i.tax.currency()).to(equal("38.57"))
+            expect(i.taxable.currency()).to(equal("321.43"))
+            expect(i.taxExempt.currency()).to(equal("631.43"))
+            expect(i.discount.currency()).to(equal("82.86"))
+            expect(i.charge.currency()).to(equal("0.00"))
+          }
+        }
+        
+        context("regular sale, SCPWD20 discount, one product is discount disabled") {
+          it("provides right computation") {
+            var i = BPInvoiceObj(isTaxInclusive: true)
+            let line1 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product1, qty: 3) // 200
+            let line2 = BPInvoiceLineObj(invoice: i, id: 0, product: TestProducts.product3, qty: 2) // 300
+            
+            i.add(line: line1)
+            i.add(line: line2)
+            i.discountType = .scpwd20
+            i.numOfGuests = 5
+            i.numOfSCPWD = 2
+            
+            i.taxRates = [TestTaxes.tax1]
+            
+            expect(i.amountDue.currency()).to(equal("1,131.43"))
+            expect(i.tax.currency()).to(equal("102.86"))
+            expect(i.taxable.currency()).to(equal("857.14"))
+            expect(i.taxExempt.currency()).to(equal("171.43"))
+            expect(i.discount.currency()).to(equal("42.86"))
+            expect(i.charge.currency()).to(equal("0.00"))
+          }
+        }
+      }
     }
   }
 }

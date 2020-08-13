@@ -16,6 +16,9 @@ public struct BPInvoiceLineObj: BPInvoiceLine {
   public var discount: BPDiscountType?
   public var isTaxExempt: Bool
   public var isTaxInclusive: Bool
+  public var amountForSCPWDGuest: Double = 0
+  public var amountForRegularGuest: Double = 0
+  public var amountPerGuest: Double = 0
   public var taxRates: [BPTaxRate]
   public var chargeRates: [BPExtraCharge]
   

@@ -12,6 +12,7 @@ public protocol BPProduct {
   var price: Double? { get set }
   var isTaxExempt: Bool? { get set }
   var isDiscountDisabled: Bool? { get set }
+  var isSCPWDDiscountable: Bool? { get set }
 
   var taxRates: [BPTaxRate] { get set }
 }

@@ -15,18 +15,21 @@ public struct BPProductObj: BPProduct {
   public var price: Double?
   public var isTaxExempt: Bool?
   public var isDiscountDisabled: Bool?
+  public var isSCPWDDiscountable: Bool?
   public var taxRates: [BPTaxRate]
   
   public init(name: String,
               price: Double,
               isTaxExempt: Bool? = false,
               isDiscountDisabled: Bool = false,
+              isSCPWDDiscountable: Bool = true,
               taxRates: [BPTaxRate] = []) {
     
     self.name = name
     self.price = price
     self.isTaxExempt = isTaxExempt
     self.isDiscountDisabled = isDiscountDisabled
+    self.isSCPWDDiscountable = isSCPWDDiscountable
     self.taxRates = taxRates
   }
 }

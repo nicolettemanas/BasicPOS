@@ -52,13 +52,27 @@ public struct BPInvoiceObj: BPInvoice {
     }
   }
   
+  public var numOfGuests: Int {
+    didSet {
+      recalculate()
+    }
+  }
+  
+  public var numOfSCPWD: Int {
+    didSet {
+      recalculate()
+    }
+  }
+  
   public init(id: Int = 0,
        isTaxInclusive: Bool = true,
        isTaxExempt: Bool = false,
        taxRates: [BPTaxRate] = [],
        chargeRates: [BPExtraCharge] = [],
        discountType: BPDiscountType? = nil,
-       customer: BPCustomer? = nil) {
+       customer: BPCustomer? = nil,
+       numOfGuests: Int = 1,
+       numOfSCPWD: Int = 0) {
     
     self.id = id
     self.isTaxInclusive = isTaxInclusive
@@ -68,6 +82,8 @@ public struct BPInvoiceObj: BPInvoice {
     self.chargeRates = chargeRates
     self.discountType = discountType
     self.customer = customer
+    self.numOfGuests = numOfGuests
+    self.numOfSCPWD = numOfSCPWD
   }
   
   /// removes and adds modified lines to update computation

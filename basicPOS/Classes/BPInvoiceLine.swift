@@ -10,6 +10,8 @@ import Foundation
 public enum BPDiscountType {
   case amount(Double)
   case percent(Double)
+  case scpwd20
+  case scpwd5
 }
 
 public protocol BPInvoiceLine {
@@ -37,6 +39,19 @@ public protocol BPInvoiceLine {
   /// already included in the price
   var isTaxInclusive: Bool { get set }
   
+  // MARK: - LOCAL VARIABLES
+  
+  /// used in local computations
+  /// AmtPerGuest * SCPWD Count
+  var amountForSCPWDGuest: Double { get set }
+  
+  /// used in local computations
+  /// AmtPerGuest * Guest Count
+  var amountForRegularGuest: Double { get set }
+  
+  /// used in local computations
+  /// SubTotal / Guest Count
+  var amountPerGuest: Double { get set }
   
   mutating func set(
     product: BPProduct,
@@ -94,11 +109,19 @@ public extension BPInvoiceLine where Self: Any {
     product = p
     qty = q
     discount = d ?? invoice.discountType
+    if  case .scpwd20 = discount,
+        case .scpwd5 = discount {
+      discount = product.isSCPWDDiscountable ?? false ? discount : nil
+    }
     
     isTaxExempt = invoice.isTaxExempt || (product.isTaxExempt ?? false) || (invoice.customer?.isTaxExempt ?? false)
     taxRates = isTaxExempt ? [] : product.taxRates + invoice.taxRates
     chargeRates = invoice.chargeRates
     isTaxInclusive = invoice.isTaxInclusive
+    
+    amountPerGuest = subTotal/Double(invoice.numOfGuests)
+    amountForSCPWDGuest = amountPerGuest * Double(invoice.numOfSCPWD)
+    amountForRegularGuest = amountPerGuest * Double(invoice.numOfGuests - invoice.numOfSCPWD)
   }
   
   var subTotal: Double {
@@ -117,7 +140,14 @@ public extension BPInvoiceLine where Self: Any {
   
   /// compute discountable amount
   var discountable: Double {
-    return subTotal
+    guard let _d = discount, !(product.isDiscountDisabled ?? false)
+    else { return subTotal }
+    
+    switch (_d) {
+      case .amount, .percent: return subTotal
+      case .scpwd20: return amountForSCPWDGuest/(1 + totalTaxRate)
+      case .scpwd5: return amountForSCPWDGuest
+    }
   }
   
   /// identify discount amount and subtract discount from discountable
@@ -128,18 +158,32 @@ public extension BPInvoiceLine where Self: Any {
     switch (_d) {
       case let .amount(d): return d
       case let .percent(p): return discountable * p
+      case .scpwd20: return discountable * 0.2
+      case .scpwd5: return discountable * 0.05
     }
   }
   
-  /// compute taxable amount
+  /// compute final taxable amount
   var taxable: Double {
     guard !isTaxExempt else { return 0 }
-    let amount = discountable - discountAmount
-    
-    return isTaxInclusive ? amount / (1 + totalTaxRate) : amount
+
+    switch (discount, product.isDiscountDisabled ?? false) {
+    case (.amount, _),
+         (.percent, _),
+         (nil, _),
+         (.scpwd20, true),
+         (.scpwd5, true):
+      let amount = discountable - discountAmount
+      return isTaxInclusive ? amount / (1 + totalTaxRate) : amount
+      
+    case (.scpwd20, false):
+      return product.isSCPWDDiscountable ?? true ? amountForRegularGuest / (1 + totalTaxRate) : chargeable / (1 + totalTaxRate)
+      
+    case (.scpwd5, false): return chargeable / (1 + totalTaxRate)
+    }
   }
   
-  /// compute tax from taxable
+  /// compute final tax from taxable
   var tax: Double {
     return taxable * totalTaxRate
   }
@@ -147,8 +191,19 @@ public extension BPInvoiceLine where Self: Any {
   /// compute chargeable amount
   /// if no charge rates, can be amount due
   var chargeable: Double {
-    let amount = discountable - discountAmount
-    return isTaxInclusive ? amount : amount + tax
+    switch (discount, product.isDiscountDisabled ?? false) {
+      case (.amount, _),
+      (.percent, _),
+      (nil, _),
+      (.scpwd20, true),
+      (.scpwd5, true):
+        let amount = discountable - discountAmount
+        return isTaxInclusive ? amount : amount + tax
+      
+    case (.scpwd20, false),
+         (.scpwd5, false):
+      return discountable - discountAmount + amountForRegularGuest
+    }
   }
   
   /// total extra charges added
@@ -162,7 +217,13 @@ public extension BPInvoiceLine where Self: Any {
   }
   
   var taxExempt: Double {
-    return isTaxExempt ? amountDue : charge
+    switch (discount, product.isDiscountDisabled ?? false) {
+    case (.scpwd20, false):
+      return isTaxExempt ? amountDue : discountable - discountAmount
+      
+    default:
+      return isTaxExempt ? amountDue : charge
+    }
   }
   
   var chargesBreakdown: [String: Double] {

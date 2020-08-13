@@ -18,6 +18,9 @@ public protocol BPInvoice {
   var customer: BPCustomer? { get set }
   var taxRates: [BPTaxRate] { get set }
   var chargeRates: [BPExtraCharge] { get set }
+  
+  var numOfGuests: Int { get set }
+  var numOfSCPWD: Int { get set }
 
   mutating func add(line: BPInvoiceLine)
   
